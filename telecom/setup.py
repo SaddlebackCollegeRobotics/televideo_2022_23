@@ -1,6 +1,6 @@
 from setuptools import setup
 
-package_name = 'zed_cv'
+package_name = 'telecom'
 
 setup(
     name=package_name,
@@ -13,15 +13,13 @@ setup(
     ],
     install_requires=['setuptools'],
     zip_safe=True,
-    maintainer='jasper',
-    maintainer_email='49565505+wluxie@users.noreply.github.com',
+    maintainer='camwolff',
+    maintainer_email='36940948+camwolff02@users.noreply.github.com',
     description='TODO: Package description',
     license='TODO: License declaration',
     tests_require=['pytest'],
     entry_points={
         'console_scripts': [
-            'zed_pub = zed_cv.zed_pub:main',
-            'cam_sub = zed_cv.cam_sub:main',
         ],
     },
 )
