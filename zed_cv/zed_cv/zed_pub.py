@@ -12,8 +12,8 @@ import numpy as np
 
 class Resolution(NamedTuple):
     """Desired camera resolution."""
-    width: int = 1280
-    height: int = 720
+    width: int = 2208
+    height: int = 1242
 
 
 class ZedPublisher(Node):
@@ -22,16 +22,22 @@ class ZedPublisher(Node):
     def __init__(self, compressed_size: tuple[int, int], fps: int = 24):
         super().__init__('zed_pub')
 
-        self._compressed_size = compressed_size
+        self.compressed_size = compressed_size
+
+        # publish raw (2K), resized (10), and compressed images
+        self._raw_pub = self.create_publisher(
+            Image,
+            "/telecom/image_raw",
+            qos_profile=qos_profile_sensor_data)
+
+        self._resized_pub = self.create_publisher(
+            Image,
+            '/telecom/image_resized',
+            qos_profile=qos_profile_sensor_data)
 
         self._compressed_pub = self.create_publisher(
             CompressedImage,
-            'image_cv_compressed',
-            qos_profile=qos_profile_sensor_data)
-
-        self._raw_pub = self.create_publisher(
-            Image,
-            "image_raw",
+            '/telecom/image_compressed',
             qos_profile=qos_profile_sensor_data)
 
         self._timer = self.create_timer(1/fps, self._timer_callback)
@@ -46,18 +52,22 @@ class ZedPublisher(Node):
         if success:
             # only take left camera feed
             frame = np.split(frame, 2, axis=1)[0]
-            
-            # publish uncompressed frame
-            self._raw_pub.publish(Image(frame))
 
-            # publish compressed frame
+            # publish uncompressed frame
+            self._raw_pub.publish(self._bridge.cv2_to_imgmsg(frame))
+
             frame = cv2.resize(frame,
-                               self._compressed_size,
+                               self.compressed_size,
                                interpolation=cv2.INTER_AREA)
 
-            self.get_logger().info('Publishing ZED frame')
+            # publish resized frame
+            self._compressed_pub.publish(self._bridge.cv2_to_imgmsg(frame))
+
+            # publish compressed frame
             self._compressed_pub.publish(
                 self._bridge.cv2_to_compressed_imgmsg(frame))
+
+            self.get_logger().info('Publishing ZED frame')
         else:
             self.get_logger().info('Unsuccessful frame capture')
 

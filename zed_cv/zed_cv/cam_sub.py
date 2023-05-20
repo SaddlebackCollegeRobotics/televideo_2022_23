@@ -1,14 +1,11 @@
+"""ROS2 Node for subscribing to camera feed and displaying images"""
 import rclpy
 from rclpy.node import Node
 from rclpy.callback_groups import ReentrantCallbackGroup
 from rclpy.qos import qos_profile_sensor_data
-from sensor_msgs.msg import CompressedImage
+from sensor_msgs.msg import Image
 import cv2
 from cv_bridge import CvBridge
-import os
-import sys
-from datetime import datetime
-import numpy as np
 
 
 class CamSubscriber(Node):
@@ -24,8 +21,8 @@ class CamSubscriber(Node):
 
         profile = qos_profile_sensor_data
         group = ReentrantCallbackGroup()
-        self._subscription = self.create_subscription(CompressedImage,
-                                                      'image_cv_compressed',
+        self._subscription = self.create_subscription(Image,
+                                                      '/image_uncompressed',
                                                       self.listener_callback,
                                                       qos_profile=profile,
                                                       callback_group=group)
@@ -57,8 +54,7 @@ def main(args=None):
     # when the garbage collector destroys the node object)
     image_subscriber.destroy_node()
     # Shutdown the ROS client library for Python
-    rclpy.shutdown()                                         # Shutdown the rclpy library
-
+    rclpy.shutdown()  # Shutdown the rclpy library
 
 
 if __name__ == '__main__':

@@ -14,7 +14,7 @@ from launch_ros.actions import Node
 
 def generate_launch_description():
     """Generate launch description for base station telecom system."""
-    img_width, img_height = 1920, 1200
+    img_width, img_height = 1920, 1080
 
     isaac_package = 'isaac_ros_h264_decoder'
     launch_args = {'input_width': img_width, 'input_height': img_height}
