@@ -11,6 +11,7 @@ from launch.launch_description_sources import PythonLaunchDescriptionSource
 
 from launch_ros.actions import Node
 
+
 def generate_launch_description():
     """Generate launch description for rover telecom system."""
     img_width, img_height = 1920, 1200
