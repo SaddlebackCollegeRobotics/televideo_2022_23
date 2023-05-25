@@ -14,10 +14,11 @@ from launch_ros.actions import Node
 
 def generate_launch_description():
     """Generate launch description for rover telecom system."""
-    img_width, img_height = 1920, 1200
+    img_width, img_height = 1280, 720
 
     isaac_package = 'isaac_ros_h264_encoder'
-    launch_args = {'input_width': img_width, 'input_height': img_height}
+    launch_args = {'input_width': img_width, 'input_height': img_height,
+                    'profile': 'high', 'hw_preset': 'medium', 'config': 'custom'}
     encoder = IncludeLaunchDescription(
         PythonLaunchDescriptionSource([os.path.join(
             get_package_share_directory(isaac_package),
