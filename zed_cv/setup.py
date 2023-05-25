@@ -21,7 +21,7 @@ setup(
     entry_points={
         'console_scripts': [
             'zed_pub = zed_cv.zed_pub:main',
-            'zed_sub = zed_cv.zed_sub:main',
+            'cam_sub = zed_cv.cam_sub:main',
         ],
     },
 )
