@@ -12,14 +12,16 @@ import numpy as np
 
 class Resolution(NamedTuple):
     """Desired camera resolution."""
-    width: int = 2208
-    height: int = 1242
+    # width: int = 2208
+    # height: int = 1242
+    width: int = 1280
+    height: int = 720
 
 
 class ZedPublisher(Node):
     """Publishes compressed and uncompressed image feeds"""
 
-    def __init__(self, compressed_size: tuple[int, int], fps: int = 24):
+    def __init__(self, compressed_size: tuple, fps: int = 30):
         super().__init__('zed_pub')
 
         self.compressed_size = compressed_size
@@ -27,21 +29,23 @@ class ZedPublisher(Node):
         # publish raw (2K), resized (10), and compressed images
         self._raw_pub = self.create_publisher(
             Image,
-            "/telecom/image_raw",
-            qos_profile=qos_profile_sensor_data)
+            "telecom/image_raw",
+            10)
 
         self._resized_pub = self.create_publisher(
             Image,
-            '/telecom/image_resized',
-            qos_profile=qos_profile_sensor_data)
+            '/image_raw',
+            10)
 
         self._compressed_pub = self.create_publisher(
             CompressedImage,
             '/telecom/image_compressed',
             qos_profile=qos_profile_sensor_data)
 
-        self._timer = self.create_timer(1/fps, self._timer_callback)
+        self._timer = self.create_timer(1/15, self._timer_callback)
         self._camera = cv2.VideoCapture(0)
+        # self._camera.set(cv2.CAP_PROP_BUFFERSIZE, 10)
+        self._camera.set(cv2.CAP_PROP_FPS, 15)
         self._bridge = CvBridge()
         image_size = Resolution()
         self._camera.set(cv2.CAP_PROP_FRAME_WIDTH, image_size.width * 2)
@@ -49,23 +53,25 @@ class ZedPublisher(Node):
 
     def _timer_callback(self):
         success, frame = self._camera.read()
+        
         if success:
             # only take left camera feed
             frame = np.split(frame, 2, axis=1)[0]
 
             # publish uncompressed frame
-            self._raw_pub.publish(self._bridge.cv2_to_imgmsg(frame))
+            # self._raw_pub.publish(self._bridge.cv2_to_imgmsg(frame, "rgb8"))
 
             frame = cv2.resize(frame,
-                               self.compressed_size,
+                            #    self.compressed_size,
+                                (1024, 576),
                                interpolation=cv2.INTER_AREA)
 
             # publish resized frame
-            self._compressed_pub.publish(self._bridge.cv2_to_imgmsg(frame))
+            self._resized_pub.publish(self._bridge.cv2_to_imgmsg(frame, "rgb8"))
 
             # publish compressed frame
-            self._compressed_pub.publish(
-                self._bridge.cv2_to_compressed_imgmsg(frame))
+            # self._compressed_pub.publish(
+            #     self._bridge.cv2_to_compressed_imgmsg(frame))
 
             self.get_logger().info('Publishing ZED frame')
         else:

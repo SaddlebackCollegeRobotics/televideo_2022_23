@@ -19,12 +19,12 @@ def generate_launch_description():
     isaac_package = 'isaac_ros_h264_encoder'
     launch_args = {'input_width': img_width, 'input_height': img_height,
                     'profile': 'high', 'hw_preset': 'medium', 'config': 'custom'}
-    encoder = IncludeLaunchDescription(
-        PythonLaunchDescriptionSource([os.path.join(
-            get_package_share_directory(isaac_package),
-            'launch', 'isaac_ros_h264_encoder.launch.py'
-        )]), launch_arguments=launch_args.items()
-    )
+    # encoder = IncludeLaunchDescription(
+    #     PythonLaunchDescriptionSource([os.path.join(
+    #         get_package_share_directory(isaac_package),
+    #         'launch', 'isaac_ros_h264_encoder.launch.py'
+    #     )]), launch_arguments=launch_args.items()
+    # )
 
     zed_pub = Node(
         package='telecom',
@@ -33,6 +33,6 @@ def generate_launch_description():
     )
 
     return LaunchDescription([
-        encoder,
+        # encoder,
         zed_pub,
     ])

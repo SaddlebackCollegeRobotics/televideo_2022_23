@@ -29,7 +29,7 @@ class CamSubscriber(Node):
 
     def listener_callback(self, data):
         """Called whenever we recieve a frame"""
-        frame = self._bridge.compressed_imgmsg_to_cv2(data)
+        frame = self._bridge.imgmsg_to_cv2(data)
 
         if self.verbose:
             self.get_logger().info('Receiving ZED frame')

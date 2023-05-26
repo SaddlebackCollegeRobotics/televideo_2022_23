@@ -18,12 +18,12 @@ def generate_launch_description():
 
     isaac_package = 'isaac_ros_h264_decoder'
     launch_args = {'input_width': img_width, 'input_height': img_height}
-    decoder = IncludeLaunchDescription(
-        PythonLaunchDescriptionSource([os.path.join(
-            get_package_share_directory(isaac_package),
-            'launch', 'isaac_ros_h264_decoder.launch.py'
-        )]), launch_arguments=launch_args.items()
-    )
+    # decoder = IncludeLaunchDescription(
+    #     PythonLaunchDescriptionSource([os.path.join(
+    #         get_package_share_directory(isaac_package),
+    #         'launch', 'isaac_ros_h264_decoder.launch.py'
+    #     )]), launch_arguments=launch_args.items()
+    # )
 
     cam_sub = Node(
         package='telecom',
@@ -35,6 +35,6 @@ def generate_launch_description():
     )
 
     return LaunchDescription([
-        decoder,
+        # decoder,
         cam_sub,
     ])
