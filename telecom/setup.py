@@ -13,6 +13,7 @@ setup(
         ('share/' + package_name, ['launch/base_telecom.launch.py']),
         ('share/' + package_name, ['launch/rover_telecom.launch.py']),
         ('share/' + package_name, ['config/frame_data.json']),
+        ('share/' + package_name, ['scripts/find_devpath.bash']),
     ],
     install_requires=['setuptools'],
     zip_safe=True,

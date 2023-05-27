@@ -13,13 +13,13 @@ def generate_launch_description():
         output='screen',
     )
 
-    fpv_pub = Node(
+    img_stitcher = Node(
         package='telecom',
-        executable='fpv_pub',
+        executable='image_stitcher',
         output='screen',
     )
 
     return LaunchDescription([
         zed_pub,
-        fpv_pub,
+        img_stitcher,
     ])
