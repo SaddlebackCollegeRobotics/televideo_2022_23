@@ -143,6 +143,7 @@ def main(args=None):
 
     with open(os.path.join(path, 'frame_data.json')) as frame_data_path:
         frame_data = json.load(frame_data_path)
+        
         resolution = Resolution(frame_data['width'], frame_data['height'])
         fps = frame_data['fps']
         rclpy.init(args=args)

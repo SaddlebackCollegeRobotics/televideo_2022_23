@@ -1,4 +1,5 @@
 """ROS2 Node for publishing compressed and uncompressed images"""
+import json
 import os
 from typing import NamedTuple
 
@@ -64,9 +65,11 @@ class ZedPublisher(Node):
 def main(args=None):
     """Crate and spin up node"""
     path = os.path.join(os.path.dirname(os.path.realpath(__file__)),
-                                        '../../../../share/telecom/config')
+                                        '../../../../share/telecom/')
     
-    with open(os.path.join(path, 'frame_data.json')) as frame_data:
+    with open(os.path.join(path, 'frame_data.json')) as frame_data_path:
+        frame_data = json.load(frame_data_path)
+        
         fps = frame_data['fps']
 
         rclpy.init(args=args)
