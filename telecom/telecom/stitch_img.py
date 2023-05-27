@@ -26,10 +26,10 @@ class ImageStitcher(Node):
         self.channels = [
             'telecom/zed/left/image_raw', 
             'telecom/zed/left/image_raw',
-            'telecom/cam1/image_raw',
-            'telecom/cam2/image_raw',
-            'telecom/cam3/image_raw',
-            'telecom/cam4/image_raw',
+            'telecom/fpv/0/image_raw',
+            'telecom/fpv/1/image_raw',
+            'telecom/fpv/2/image_raw',
+            'telecom/fpv/3/image_raw',
         ]
         self.cam_subscriptions = dict()
         self.images = dict()
@@ -138,7 +138,7 @@ class ImageStitcher(Node):
 def main(args=None):
     """Crate and spin up node"""
     path = os.path.join(os.path.dirname(os.path.realpath(__file__)),
-                                        '../../../../share/drive')
+                                        '../../../../share/telecom/config')
 
     with open(os.path.join(path, 'frame_data.json')) as frame_data:
         resolution = Resolution(frame_data['width'], frame_data['height'])

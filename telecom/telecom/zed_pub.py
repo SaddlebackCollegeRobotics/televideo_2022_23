@@ -64,7 +64,7 @@ class ZedPublisher(Node):
 def main(args=None):
     """Crate and spin up node"""
     path = os.path.join(os.path.dirname(os.path.realpath(__file__)),
-                                        '../../../../share/drive')
+                                        '../../../../share/telecom/config')
     
     with open(os.path.join(path, 'frame_data.json')) as frame_data:
         fps = frame_data['fps']
