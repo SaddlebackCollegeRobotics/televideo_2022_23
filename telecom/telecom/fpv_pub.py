@@ -1,6 +1,7 @@
 """ROS2 Node for publishing compressed and uncompressed images"""
 import os
 import subprocess
+import sys
 from typing import NamedTuple
 from collections import namedtuple
 
@@ -68,22 +69,17 @@ def get_camera_dev_paths(self, path):
                                  text=True, 
                                  shell=True, 
                                  executable='/bin/bash').stdout.splitlines()
-    
-    devpath_list = ["", "", ""]
+    devpath_list = []
 
     # Add device paths to devpath list
     for device in device_list:
         splitStr = device.split(" - ")
 
-        if "ID0001" in splitStr[1]:
-            devpath_list[0] = splitStr[0]
+        if 'MACROSIL_AV_TO_USB2.0' in splitStr[1]:
+            devpath_list.append(splitStr[0])
 
-        elif "ID0002" in splitStr[1]:
-            devpath_list[1] = splitStr[0]
-
-        elif "ID0003" in splitStr[1]:
-            devpath_list[2] = splitStr[0]
-
+    print(devpath_list)
+    sys.exit()
     return devpath_list
 
 
