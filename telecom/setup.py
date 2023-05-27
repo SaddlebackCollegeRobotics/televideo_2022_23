@@ -24,9 +24,9 @@ setup(
     entry_points={
         'console_scripts': [
             'image_stitcher = telecom.stitch_img:main',
-            'zed_pub = telecom.stitch_img:main',
-            'cam_pub = telecom.stitch_img:main',
-            'image_stitcher = telecom.stitch_img:main',
+            'zed_pub = telecom.zed_pub:main',
+            'fpv_pub = telecom.fpv_pub:main',
+            'cam_sub = telecom.cam_sub:main',
         ],
     },
 )
