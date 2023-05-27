@@ -12,6 +12,7 @@ setup(
         ('share/' + package_name, ['package.xml']),
         ('share/' + package_name, ['launch/base_telecom.launch.py']),
         ('share/' + package_name, ['launch/rover_telecom.launch.py']),
+        ('share/' + package_name, ['config/frame_data.json']),
     ],
     install_requires=['setuptools'],
     zip_safe=True,
@@ -22,6 +23,10 @@ setup(
     tests_require=['pytest'],
     entry_points={
         'console_scripts': [
+            'image_stitcher = telecom.stitch_img:main',
+            'zed_pub = telecom.stitch_img:main',
+            'cam_pub = telecom.stitch_img:main',
+            'image_stitcher = telecom.stitch_img:main',
         ],
     },
 )

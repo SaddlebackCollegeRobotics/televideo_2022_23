@@ -1,0 +1,71 @@
+"""ROS2 Node for publishing compressed and uncompressed images"""
+import os
+from typing import NamedTuple
+
+import rclpy
+from rclpy.node import Node
+from sensor_msgs.msg import Image
+
+import cv2
+from cv_bridge import CvBridge
+
+
+class Resolution(NamedTuple):
+    """Default camera resolution."""
+    width: int = 720
+    height: int = 576
+
+
+class CamPublisher(Node):
+    """Publishes compressed and uncompressed image feeds"""
+    curr_camera_id = 0
+
+    def __init__(self, fps: int = 24):
+        super().__init__('cam_pub')
+        self.camera_id = curr_camera_id
+        curr_camera_id += 1
+
+        self._raw_cam_pub = self.create_publisher(
+            Image,
+            f'telecom/mux{self.camera_id}/image_raw',
+            10)
+
+        self.create_timer(1/fps, self._publish_frame)
+        
+        self._bridge = CvBridge()
+        image_size = Resolution()
+
+        self._camera = cv2.VideoCapture(self.camera_id)
+        self._camera.set(cv2.CAP_PROP_FPS, fps)
+        self._camera.set(cv2.CAP_PROP_FRAME_WIDTH, image_size.width)
+        self._camera.set(cv2.CAP_PROP_FRAME_HEIGHT, image_size.height)
+
+    def _publish_frame(self):
+        success, frame = self._camera.read()
+        
+        if success:
+            self._raw_cam_pub.publish(self._bridge.cv2_to_imgmsg(frame, "rgb8"))
+
+            self.get_logger().info(f'Publishing Camera [{self.camera_id}]frame')
+        else:
+            self.get_logger().info('Unsuccessful frame capture')
+
+
+def main(args=None):
+    """Crate and spin up node"""
+    path = os.path.join(os.path.dirname(os.path.realpath(__file__)),
+                                        '../../../../share/drive')
+    
+    with open(os.path.join(path, 'frame_data.json')) as frame_data:
+        fps = frame_data['fps']
+
+        rclpy.init(args=args)
+        image_publisher = CamPublisher(fps)
+        rclpy.spin(image_publisher)
+
+        image_publisher.destroy_node()
+        rclpy.shutdown()
+
+
+if __name__ == '__main__':
+    main()
