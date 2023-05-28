@@ -7,6 +7,7 @@ import rclpy
 from rclpy.node import Node
 from rclpy.qos import qos_profile_sensor_data
 from sensor_msgs.msg import Image
+from std_msgs.msg import Int64MultiArray
 
 import cv2
 from cv_bridge import CvBridge
@@ -23,15 +24,19 @@ class ImageStitcher(Node):
     def __init__(self, resolution, fps: int = 15):
         super().__init__('image_stitcher')
 
+        self.successful_captures = self.create_subscription(
+            Int64MultiArray, 
+            "/telecom/active_cams", 
+            self._update_successful_captures,
+            10)
+
         self.resolution = resolution
-        self.channels = [
+        self.zed_channels = [
             'telecom/zed/left/image_raw', 
-            'telecom/zed/left/image_raw',
-            'telecom/fpv/0/image_raw',
-            'telecom/fpv/1/image_raw',
-            'telecom/fpv/2/image_raw',
-            'telecom/fpv/3/image_raw',
         ]
+
+        self.channels = []
+
         self.cam_subscriptions = dict()
         self.images = dict()
 
@@ -48,6 +53,14 @@ class ImageStitcher(Node):
         timer_period = 0.1
         self.create_timer(timer_period, self._subscribe_to_cams_cli)
         
+
+    def _update_successful_captures(self, msg):
+        self.channels = self.zed_channels
+        
+        for id_ in msg.data:
+            self.channels.append(f'telecom/fpv{id_}/image_raw')
+
+
     def _subscribe_to_cams_cli(self):
         # Select a channel
         channel_num = 0
@@ -118,23 +131,22 @@ class ImageStitcher(Node):
     def stitch_images(self, images):
         # note: axis=0 - vertical stitch, axis=1 - horizontal stitch
         # np.pad(arr, ((top,bottom), (left,right)), 'constant')
-        match len(images):
-            case 0:
+        if True:
+            if len(images) == 0:
                 return np.zeros((*self.resolution, 3), dtype=np.uint8)
-            case 1: 
+            elif len(images) == 1: 
                 return images[0]
-            case 2:
+            elif len(images) == 2:
                 return np.concatenate(images[0], images[1], axis=1)
-            case 3:
+            elif len(images) == 3:
                 top = np.concatenate((images[0], images[1]), axis=1)
                 horiz_padding = (images[2].shape[0]/2, images[2].shape[0]/2)
                 bottom = np.pad(images[2], ((0, 0), horiz_padding))
                 return np.concatenate((top, bottom), axis=0)
-            case 4:
+            elif len(images) == 4:
                 top = np.concatenate((images[0], images[1]), axis=1)
                 bottom = np.concatenate((images[2], images[3]), axis=1)
                 return np.concatenate((top, bottom), axis=0)
-
 
 def main(args=None):
     """Crate and spin up node"""

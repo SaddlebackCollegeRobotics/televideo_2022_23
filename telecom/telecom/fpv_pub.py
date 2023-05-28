@@ -2,13 +2,13 @@
 import json
 import os
 import subprocess
-import sys
 from typing import NamedTuple
 from collections import namedtuple
 
 import rclpy
 from rclpy.node import Node
 from sensor_msgs.msg import Image
+from std_msgs.msg import Int64MultiArray
 
 import cv2
 from cv_bridge import CvBridge
@@ -41,29 +41,36 @@ class FpvPublisher(Node):
             cap.set(cv2.CAP_PROP_FRAME_HEIGHT, image_size.height)
 
             self.cameras.append(Camera(
-                pub=self.create_publisher(Image, f'telecom/fpv/{id_}/image_raw', 10),
+                pub=self.create_publisher(Image, f'telecom/fpv{id_}/image_raw', 10),
                 cap=cap,
                 id=id_
             ))
 
         self.create_timer(1/fps, self._publish_frames)
+
+        self._active_cam_publisher = self.create_publisher(Int64MultiArray, "/telecom/active_cams", 10)
         
 
     def _publish_frames(self):
+        successful_captures = Int64MultiArray(data=[])
+
         for camera in self.cameras:
             success, frame = camera.cap.read()
             
             if success:
                 camera.pub.publish(self._bridge.cv2_to_imgmsg(frame, "rgb8"))
+                successful_captures.data.append(camera.id)
 
                 self.get_logger().info(f'Publishing Fpv Camera [{camera.id}] frame')
             else:
                 self.get_logger().info('Unsuccessful frame capture')
 
+        self._active_cam_publisher.publish(successful_captures)
 
-def get_camera_dev_paths(self, path):
+
+def get_camera_dev_paths(path):
     """ Get motor controller device paths using serial IDs """
-    getter_script = os.path.join(path, 'scripts/find_devpath.bash')
+    getter_script = os.path.join(path, 'find_devpath.bash')
     
     device_list = subprocess.run(["\"" + getter_script + "\""], 
                                  stdout=subprocess.PIPE, 
@@ -76,11 +83,10 @@ def get_camera_dev_paths(self, path):
     for device in device_list:
         splitStr = device.split(" - ")
 
-        if 'MACROSIL_AV_TO_USB2.0' in splitStr[1]:
+        if 'MACROSIL_AV_TO_USB2.0' in splitStr[1] and 'video' in splitStr[0]:
             devpath_list.append(splitStr[0])
 
     print(devpath_list)
-    sys.exit()
     return devpath_list
 
 
