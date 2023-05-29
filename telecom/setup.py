@@ -26,8 +26,10 @@ setup(
         'console_scripts': [
             'image_stitcher = telecom.stitch_img:main',
             'zed_pub = telecom.zed_pub:main',
-            'fpv_pub = telecom.fpv_pub:main',
-            'cam_sub = telecom.cam_sub:main',
+            # 'fpv_pub = telecom.fpv_pub:main',
+            'fpv_pub = telecom.general_cam_pub:main',
+            'cam_sub = telecom.general_cam_sub:main',
+            # 'cam_sub = telecom.cam_sub:main',
         ],
     },
 )
