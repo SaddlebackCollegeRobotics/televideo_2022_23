@@ -13,7 +13,7 @@ class CompressImage(Node):
         super().__init__('compress_img')
 
         self.create_subscription(Image, 
-                                 '/image_raw', 
+                                 '/telecom/image_raw', 
                                  self._publish_compressed_img,  
                                  qos_profile=qos_profile_sensor_data)
         self._camera_pub = self.create_publisher(CompressedImage, 
