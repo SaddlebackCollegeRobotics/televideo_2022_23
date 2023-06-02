@@ -22,7 +22,7 @@ class CompressImage(Node):
         self._bridge = CvBridge()
 
     def _publish_compressed_img(self, msg):
-        img = self._bridge.imgmsg_to_cv2(msg.data)
+        img = self._bridge.imgmsg_to_cv2(msg)
         compressed = self._bridge.cv2_to_compressed_imgmsg(img)
         self._camera_pub.publish(compressed)
 

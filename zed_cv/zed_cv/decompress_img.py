@@ -22,7 +22,7 @@ class DecompressImage(Node):
         self._bridge = CvBridge()
 
     def _publish_uncompressed_img(self, msg):
-        compressed = self._bridge.compressed_imgmsg_to_cv2(msg.data)
+        compressed = self._bridge.compressed_imgmsg_to_cv2(msg)
         img = self._bridge.cv2_to_imgmsg(img)
         self._camera_pub.publish(img)
 
