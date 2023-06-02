@@ -11,8 +11,9 @@ class DecompressImage(Node):
 
     def __init__(self):
         self.create_subscription(Image, '/image_compressed', 
-                                 self._publish_uncompressed_img, 
+                                 callback=self._publish_uncompressed_img, 
                                  qos_profile=qos_profile_sensor_data)
+        
         self._camera_pub = self.create_publisher(CompressedImage, 
                                                  '/image_uncompressed', 
                                                  10)
