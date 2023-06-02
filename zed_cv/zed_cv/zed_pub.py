@@ -59,7 +59,7 @@ class ZedPublisher(Node):
             frame = np.split(frame, 2, axis=1)[0]
 
             # publish uncompressed frame
-            # self._raw_pub.publish(self._bridge.cv2_to_imgmsg(frame, "rgb8"))
+            self._raw_pub.publish(self._bridge.cv2_to_imgmsg(frame, "rgb8"))
 
             frame = cv2.resize(frame,
                             #    self.compressed_size,
