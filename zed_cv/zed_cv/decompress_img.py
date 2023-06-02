@@ -2,6 +2,7 @@ from cv_bridge import CvBridge
 
 import rclpy
 from rclpy.node import Node
+from rclpy.qos import qos_profile_sensor_data
 
 from sensor_msgs.msg import CompressedImage, Image
 
@@ -9,8 +10,12 @@ from sensor_msgs.msg import CompressedImage, Image
 class DecompressImage(Node):
 
     def __init__(self):
-        self.create_subscription(Image, '/image_compressed', self._publish_uncompressed_img, 10)
-        self._camera_pub = self.create_publisher(CompressedImage, '/image_uncompressed', 10)
+        self.create_subscription(Image, '/image_compressed', 
+                                 self._publish_uncompressed_img, 
+                                 qos_profile=qos_profile_sensor_data)
+        self._camera_pub = self.create_publisher(CompressedImage, 
+                                                 '/image_uncompressed', 
+                                                 10)
         self._bridge = CvBridge()
 
     def _publish_uncompressed_img(self, msg):
