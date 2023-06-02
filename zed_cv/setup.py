@@ -20,8 +20,10 @@ setup(
     tests_require=['pytest'],
     entry_points={
         'console_scripts': [
-            'zed_pub = zed_cv.zed_pub:main',
-            'cam_sub = zed_cv.cam_sub:main',
+            f'zed_pub = {package_name}.zed_pub:main',
+            f'cam_sub = {package_name}.cam_sub:main',
+            f'compress_img = {package_name}.compress_img:main',
+            f'decompress_img = {package_name}.decompress_img:main',
         ],
     },
 )
