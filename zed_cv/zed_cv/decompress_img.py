@@ -12,7 +12,7 @@ class DecompressImage(Node):
     def __init__(self):
         super().__init__('uncompress_img')
 
-        self.create_subscription(Image, '/image_compressed', 
+        self.create_subscription(Image, '/telecom/image_compressed', 
                                  self._publish_uncompressed_img, 
                                  qos_profile=qos_profile_sensor_data)
         

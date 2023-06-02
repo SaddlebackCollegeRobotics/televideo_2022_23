@@ -70,8 +70,8 @@ class ZedPublisher(Node):
             self._resized_pub.publish(self._bridge.cv2_to_imgmsg(frame, "rgb8"))
 
             # publish compressed frame
-            # self._compressed_pub.publish(
-            #     self._bridge.cv2_to_compressed_imgmsg(frame))
+            self._compressed_pub.publish(
+                self._bridge.cv2_to_compressed_imgmsg(frame))
 
             self.get_logger().info('Publishing ZED frame')
         else:
