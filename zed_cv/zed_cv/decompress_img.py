@@ -10,8 +10,10 @@ from sensor_msgs.msg import CompressedImage, Image
 class DecompressImage(Node):
 
     def __init__(self):
+        super().__init__('uncompress_img')
+
         self.create_subscription(Image, '/image_compressed', 
-                                 callback=self._publish_uncompressed_img, 
+                                 self._publish_uncompressed_img, 
                                  qos_profile=qos_profile_sensor_data)
         
         self._camera_pub = self.create_publisher(CompressedImage, 
